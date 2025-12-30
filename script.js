@@ -1,524 +1,443 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // بيانات الطلبات المبدئية
-    let orders = [
-        {
-            id: 1234,
-            customer: "أحمد محمد",
-            phone: "0551234567",
-            state: "الرياض",
-            amount: 450,
-            date: "2024-01-15",
-            status: "new",
-            products: "ساعة ذكية، سماعات بلوتوث"
-        },
-        {
-            id: 1235,
-            customer: "سارة خالد",
-            phone: "0549876543",
-            state: "جدة",
-            amount: 320,
-            date: "2024-01-15",
-            status: "confirmed",
-            products: "حقيبة يد، محفظة"
-        },
-        {
-            id: 1236,
-            customer: "محمد علي",
-            phone: "0561122334",
-            state: "الدمام",
-            amount: 890,
-            date: "2024-01-14",
-            status: "shipped",
-            products: "هاتف ذكي، غطاء واقي"
-        },
-        {
-            id: 1237,
-            customer: "فاطمة سعيد",
-            phone: "0504455667",
-            state: "الرياض",
-            amount: 150,
-            date: "2024-01-14",
-            status: "cancelled",
-            products: "كتب، أقلام"
-        },
-        {
-            id: 1238,
-            customer: "خالد عبدالله",
-            phone: "0598889999",
-            state: "مكة",
-            amount: 540,
-            date: "2024-01-13",
-            status: "confirmed",
-            products: "أحذية رياضية، جوارب"
-        },
-        {
-            id: 1239,
-            customer: "نورة أحمد",
-            phone: "0577771234",
-            state: "جدة",
-            amount: 275,
-            date: "2024-01-13",
-            status: "new",
-            products: "عطر، كريم"
-        },
-        {
-            id: 1240,
-            customer: "عبدالعزيز سالم",
-            phone: "0512345678",
-            state: "الرياض",
-            amount: 1200,
-            date: "2024-01-12",
-            status: "shipped",
-            products: "لابتوب، حقيبة حمل"
-        },
-        {
-            id: 1241,
-            customer: "لينا فهد",
-            phone: "0539876541",
-            state: "الدمام",
-            amount: 380,
-            date: "2024-01-12",
-            status: "confirmed",
-            products: "نظارة شمس، علبة نظارة"
-        },
-        {
-            id: 1242,
-            customer: "ياسر ناصر",
-            phone: "",
-            state: "الرياض",
-            amount: 670,
-            date: "2024-01-11",
-            status: "new",
-            products: "كاميرا، حامل كاميرا"
-        },
-        {
-            id: 1243,
-            customer: "هند عبدالرحمن",
-            phone: "0581122334",
-            state: "جدة",
-            amount: 95,
-            date: "2024-01-10",
-            status: "new",
-            products: "إكسسوارات شعر"
-        }
-    ];
+// عناصر DOM
+const imageInput = document.getElementById('image-input');
+const uploadLocal = document.getElementById('upload-local');
+const uploadUrl = document.getElementById('upload-url');
+const urlInputContainer = document.getElementById('url-input-container');
+const imageUrlInput = document.getElementById('image-url');
+const loadUrlBtn = document.getElementById('load-url');
+const previewArea = document.getElementById('preview-area');
+const colorsContainer = document.getElementById('colors-container');
+const brightnessSlider = document.getElementById('brightness');
+const contrastSlider = document.getElementById('contrast');
+const saturationSlider = document.getElementById('saturation');
+const hueSlider = document.getElementById('hue');
+const blurSlider = document.getElementById('blur');
+const brightnessValue = document.getElementById('brightness-value');
+const contrastValue = document.getElementById('contrast-value');
+const saturationValue = document.getElementById('saturation-value');
+const hueValue = document.getElementById('hue-value');
+const blurValue = document.getElementById('blur-value');
+const presetButtons = document.querySelectorAll('.preset-btn');
+const resetFiltersBtn = document.getElementById('reset-filters');
+const downloadImageBtn = document.getElementById('download-image');
+const downloadColorsBtn = document.getElementById('download-colors');
+const colorModal = document.getElementById('color-modal');
+const closeModal = document.querySelector('.close-modal');
+const hexCode = document.getElementById('hex-code');
+const rgbCode = document.getElementById('rgb-code');
+const hslCode = document.getElementById('hsl-code');
+const copyButtons = document.querySelectorAll('.copy-btn');
 
-    // عناصر DOM
-    const ordersList = document.getElementById('ordersList');
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const filterStatus = document.getElementById('filterStatus');
-    const filterState = document.getElementById('filterState');
-    const addOrderBtn = document.getElementById('addOrderBtn');
-    const orderModal = document.getElementById('orderModal');
-    const closeModal = document.getElementById('closeModal');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const orderForm = document.getElementById('orderForm');
-    const alertBox = document.getElementById('alertBox');
-    const alertMessage = document.getElementById('alertMessage');
-    const closeAlert = document.querySelector('.close-alert');
-    const autoFixBtn = document.getElementById('autoFixBtn');
+// متغيرات
+let originalImage = null;
+let currentImage = null;
+let extractedColors = [];
+
+// أحداث تحميل الصورة
+uploadLocal.addEventListener('click', () => {
+    imageInput.click();
+});
+
+uploadUrl.addEventListener('click', () => {
+    urlInputContainer.style.display = 'block';
+});
+
+imageInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            loadImage(event.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+loadUrlBtn.addEventListener('click', () => {
+    const url = imageUrlInput.value.trim();
+    if (url) {
+        loadImage(url);
+    } else {
+        alert('يرجى إدخال رابط صورة صالح');
+    }
+});
+
+// تحميل الصورة
+function loadImage(src) {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
     
-    // عناصر الإحصائيات
-    const totalOrdersEl = document.getElementById('totalOrders');
-    const newOrdersEl = document.getElementById('newOrders');
-    const confirmedOrdersEl = document.getElementById('confirmedOrders');
-    const shippedOrdersEl = document.getElementById('shippedOrders');
-    const cancelledOrdersEl = document.getElementById('cancelledOrders');
-    const errorOrdersEl = document.getElementById('errorOrders');
+    img.onload = function() {
+        previewArea.innerHTML = '';
+        previewArea.appendChild(img);
+        img.style.display = 'block';
+        originalImage = img;
+        currentImage = img;
+        applyFilters();
+        extractColors();
+        urlInputContainer.style.display = 'none';
+        imageUrlInput.value = '';
+    };
+    
+    img.onerror = function() {
+        alert('فشل تحميل الصورة. يرجى التحقق من الرابط أو اختيار صورة أخرى.');
+    };
+    
+    img.src = src;
+}
 
-    // تحديث الإحصائيات
-    function updateStats() {
-        const total = orders.length;
-        const newOrders = orders.filter(o => o.status === 'new').length;
-        const confirmed = orders.filter(o => o.status === 'confirmed').length;
-        const shipped = orders.filter(o => o.status === 'shipped').length;
-        const cancelled = orders.filter(o => o.status === 'cancelled').length;
-        const errors = orders.filter(o => !o.phone || o.phone === '').length;
+// استخراج الألوان من الصورة
+function extractColors() {
+    if (!originalImage) return;
+    
+    // إنشاء عنصر رسم مؤقت
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // ضبط أبعاد الكانفاس
+    canvas.width = originalImage.width;
+    canvas.height = originalImage.height;
+    
+    // رسم الصورة على الكانفاس
+    ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
+    
+    // الحصول على بيانات البكسل
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    
+    // خوارزمية مبسطة لاستخراج الألوان الشائعة
+    const colorMap = {};
+    const sampleStep = 20; // أخذ عينات لتسريع العملية
+    
+    for (let i = 0; i < pixels.length; i += 4 * sampleStep) {
+        const r = pixels[i];
+        const g = pixels[i + 1];
+        const b = pixels[i + 2];
         
-        totalOrdersEl.textContent = total;
-        newOrdersEl.textContent = newOrders;
-        confirmedOrdersEl.textContent = confirmed;
-        shippedOrdersEl.textContent = shipped;
-        cancelledOrdersEl.textContent = cancelled;
-        errorOrdersEl.textContent = errors;
+        // تجميع الألوان المتشابهة
+        const colorKey = `${Math.round(r / 10) * 10},${Math.round(g / 10) * 10},${Math.round(b / 10) * 10}`;
         
-        // تحديث عدد الأخطاء في القائمة الجانبية
-        const errorBadge = document.querySelector('.badge');
-        if (errorBadge) {
-            errorBadge.textContent = errors;
+        if (colorMap[colorKey]) {
+            colorMap[colorKey].count++;
+        } else {
+            colorMap[colorKey] = {
+                r, g, b,
+                count: 1
+            };
         }
     }
+    
+    // تحويل الخريطة إلى مصفوفة وفرزها حسب التكرار
+    const colorArray = Object.values(colorMap)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 12); // أخذ 12 لون فقط
+    
+    // تحويل الألوان إلى تنسيقات مختلفة
+    extractedColors = colorArray.map((color, index) => {
+        const hex = rgbToHex(color.r, color.g, color.b);
+        const rgb = `rgb(${color.r}, ${color.g}, ${color.b})`;
+        const hsl = rgbToHsl(color.r, color.g, color.b);
+        
+        return {
+            hex,
+            rgb,
+            hsl,
+            r: color.r,
+            g: color.g,
+            b: color.b,
+            name: `اللون ${index + 1}`
+        };
+    });
+    
+    // عرض الألوان
+    displayColors();
+}
 
-    // عرض الطلبات
-    function renderOrders(filteredOrders = orders) {
-        ordersList.innerHTML = '';
+// عرض الألوان المستخرجة
+function displayColors() {
+    colorsContainer.innerHTML = '';
+    
+    extractedColors.forEach(color => {
+        const colorItem = document.createElement('div');
+        colorItem.className = 'color-item';
+        colorItem.innerHTML = `
+            <div class="color-preview" style="background-color: ${color.hex};"></div>
+            <div class="color-info">
+                <div class="color-name">${color.name}</div>
+                <div class="color-code">${color.hex}</div>
+                <button class="copy-color-btn" data-hex="${color.hex}" data-rgb="${color.rgb}" data-hsl="${color.hsl}">
+                    <i class="fas fa-copy"></i> نسخ الكود
+                </button>
+            </div>
+        `;
         
-        filteredOrders.forEach(order => {
-            const orderItem = document.createElement('div');
-            orderItem.className = 'order-item';
+        colorsContainer.appendChild(colorItem);
+    });
+    
+    // إضافة أحداث لأزرار النسخ
+    document.querySelectorAll('.copy-color-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const hex = this.getAttribute('data-hex');
+            const rgb = this.getAttribute('data-rgb');
+            const hsl = this.getAttribute('data-hsl');
             
-            // تحديد اسم الحالة
-            let statusText, statusClass;
-            switch(order.status) {
-                case 'new':
-                    statusText = '🟡 جديد';
-                    statusClass = 'status-new';
-                    break;
-                case 'confirmed':
-                    statusText = '🟢 مؤكد';
-                    statusClass = 'status-confirmed';
-                    break;
-                case 'shipped':
-                    statusText = '🔵 مشحون';
-                    statusClass = 'status-shipped';
-                    break;
-                case 'cancelled':
-                    statusText = '🔴 ملغى';
-                    statusClass = 'status-cancelled';
-                    break;
-            }
+            // عرض النافذة المنبثقة
+            hexCode.value = hex;
+            rgbCode.value = rgb;
+            hslCode.value = hsl;
+            colorModal.style.display = 'flex';
             
-            // التحقق من وجود خطأ في الهاتف
-            const hasError = !order.phone || order.phone === '';
-            const errorIndicator = hasError ? '<i class="fas fa-exclamation-circle" style="color: #ff9e00; margin-right: 5px;"></i>' : '';
-            
-            orderItem.innerHTML = `
-                <div>${errorIndicator} ${order.id}</div>
-                <div>${order.customer}</div>
-                <div>${order.phone || '<span style="color: #ff9e00;">ناقص</span>'}</div>
-                <div>${order.state}</div>
-                <div>${order.amount} ر.س</div>
-                <div>${order.date}</div>
-                <div><span class="status-badge ${statusClass}">${statusText}</span></div>
-                <div class="order-actions">
-                    <button class="action-btn edit-order" data-id="${order.id}" title="تعديل">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn change-status" data-id="${order.id}" title="تغيير الحالة">
-                        <i class="fas fa-exchange-alt"></i>
-                    </button>
-                    <button class="action-btn delete-order" data-id="${order.id}" title="حذف">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            
-            ordersList.appendChild(orderItem);
+            // تغيير خلفية النافذة للون المحدد
+            colorModal.querySelector('.modal-content').style.borderTop = `10px solid ${hex}`;
         });
+    });
+}
+
+// تطبيق الفلاتر
+function applyFilters() {
+    if (!currentImage) return;
+    
+    const brightness = brightnessSlider.value;
+    const contrast = contrastSlider.value;
+    const saturation = saturationSlider.value;
+    const hue = hueSlider.value;
+    const blur = blurSlider.value;
+    
+    const filterString = `
+        brightness(${brightness}%)
+        contrast(${contrast}%)
+        saturate(${saturation}%)
+        hue-rotate(${hue}deg)
+        blur(${blur}px)
+    `;
+    
+    currentImage.style.filter = filterString;
+    
+    // تحديث القيم المعروضة
+    brightnessValue.textContent = `${brightness}%`;
+    contrastValue.textContent = `${contrast}%`;
+    saturationValue.textContent = `${saturation}%`;
+    hueValue.textContent = `${hue}°`;
+    blurValue.textContent = `${blur}px`;
+}
+
+// أحداث المنزلقات
+brightnessSlider.addEventListener('input', applyFilters);
+contrastSlider.addEventListener('input', applyFilters);
+saturationSlider.addEventListener('input', applyFilters);
+hueSlider.addEventListener('input', applyFilters);
+blurSlider.addEventListener('input', applyFilters);
+
+// أحداث الفلاتر الجاهزة
+presetButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+        const filterType = this.getAttribute('data-filter');
         
-        // إضافة معالجات الأحداث للأزرار
-        document.querySelectorAll('.edit-order').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const orderId = parseInt(this.getAttribute('data-id'));
-                editOrder(orderId);
-            });
-        });
+        // إزالة التحديد من جميع الأزرار
+        presetButtons.forEach(b => b.classList.remove('active'));
+        // إضافة التحديد للزر الحالي
+        this.classList.add('active');
         
-        document.querySelectorAll('.change-status').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const orderId = parseInt(this.getAttribute('data-id'));
-                changeStatus(orderId);
-            });
-        });
+        // تطبيق الفلتر المحدد
+        switch(filterType) {
+            case 'normal':
+                brightnessSlider.value = 100;
+                contrastSlider.value = 100;
+                saturationSlider.value = 100;
+                hueSlider.value = 0;
+                blurSlider.value = 0;
+                break;
+            case 'grayscale':
+                brightnessSlider.value = 100;
+                contrastSlider.value = 120;
+                saturationSlider.value = 0;
+                hueSlider.value = 0;
+                blurSlider.value = 0;
+                break;
+            case 'sepia':
+                brightnessSlider.value = 100;
+                contrastSlider.value = 100;
+                saturationSlider.value = 50;
+                hueSlider.value = 40;
+                blurSlider.value = 0;
+                break;
+            case 'invert':
+                brightnessSlider.value = 100;
+                contrastSlider.value = 100;
+                saturationSlider.value = 100;
+                hueSlider.value = 180;
+                blurSlider.value = 0;
+                break;
+            case 'hue-rotate':
+                brightnessSlider.value = 100;
+                contrastSlider.value = 100;
+                saturationSlider.value = 150;
+                hueSlider.value = 90;
+                blurSlider.value = 0;
+                break;
+            case 'vibrant':
+                brightnessSlider.value = 110;
+                contrastSlider.value = 120;
+                saturationSlider.value = 180;
+                hueSlider.value = 0;
+                blurSlider.value = 0;
+                break;
+            case 'cool':
+                brightnessSlider.value = 100;
+                contrastSlider.value = 100;
+                saturationSlider.value = 80;
+                hueSlider.value = 200;
+                blurSlider.value = 0.5;
+                break;
+            case 'warm':
+                brightnessSlider.value = 110;
+                contrastSlider.value = 110;
+                saturationSlider.value = 120;
+                hueSlider.value = 30;
+                blurSlider.value = 0;
+                break;
+        }
         
-        document.querySelectorAll('.delete-order').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const orderId = parseInt(this.getAttribute('data-id'));
-                deleteOrder(orderId);
-            });
-        });
+        applyFilters();
+    });
+});
+
+// إعادة تعيين الفلاتر
+resetFiltersBtn.addEventListener('click', () => {
+    brightnessSlider.value = 100;
+    contrastSlider.value = 100;
+    saturationSlider.value = 100;
+    hueSlider.value = 0;
+    blurSlider.value = 0;
+    
+    // إعادة تعيين الفلاتر الجاهزة
+    presetButtons.forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.preset-btn[data-filter="normal"]').classList.add('active');
+    
+    applyFilters();
+});
+
+// تحميل الصورة المعدلة
+downloadImageBtn.addEventListener('click', () => {
+    if (!currentImage) {
+        alert('يرجى تحميل صورة أولاً');
+        return;
     }
+    
+    // إنشاء عنصر رسم مؤقت
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // ضبط أبعاد الكانفاس
+    canvas.width = currentImage.naturalWidth || currentImage.width;
+    canvas.height = currentImage.naturalHeight || currentImage.height;
+    
+    // تطبيق الفلاتر على الكانفاس
+    ctx.filter = currentImage.style.filter;
+    
+    // رسم الصورة على الكانفاس
+    ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+    
+    // تحويل الكانفاس إلى رابط تحميل
+    const link = document.createElement('a');
+    link.download = 'صورة-معدلة-' + new Date().getTime() + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+});
 
-    // البحث والتصفية
-    function filterOrders() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const statusFilter = filterStatus.value;
-        const stateFilter = filterState.value;
-        
-        let filtered = orders.filter(order => {
-            // البحث
-            const matchesSearch = searchTerm === '' || 
-                order.customer.toLowerCase().includes(searchTerm) ||
-                order.phone.includes(searchTerm) ||
-                order.id.toString().includes(searchTerm);
-            
-            // التصفية حسب الحالة
-            const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-            
-            // التصفية حسب الولاية
-            const matchesState = stateFilter === 'all' || order.state === stateFilter;
-            
-            return matchesSearch && matchesStatus && matchesState;
-        });
-        
-        renderOrders(filtered);
+// تحميل لوحة الألوان
+downloadColorsBtn.addEventListener('click', () => {
+    if (extractedColors.length === 0) {
+        alert('لا توجد ألوان لتحميلها');
+        return;
     }
+    
+    // إنشاء محتوى النص
+    let content = 'لوحة الألوان المستخرجة من الصورة:\n\n';
+    extractedColors.forEach((color, index) => {
+        content += `${color.name}:\n`;
+        content += `HEX: ${color.hex}\n`;
+        content += `RGB: ${color.rgb}\n`;
+        content += `HSL: ${color.hsl}\n\n`;
+    });
+    
+    // إنشاء رابط تحميل
+    const blob = new Blob([content], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.download = 'ألوان-الصورة-' + new Date().getTime() + '.txt';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+});
 
-    // إظهار رسالة تنبيه
-    function showAlert(message, type = 'info') {
-        alertMessage.textContent = message;
-        alertBox.className = `alert ${type}`;
-        alertBox.classList.add('show');
+// إغلاق نافذة الألوان
+closeModal.addEventListener('click', () => {
+    colorModal.style.display = 'none';
+});
+
+// إغلاق النافذة عند النقر خارجها
+window.addEventListener('click', (e) => {
+    if (e.target === colorModal) {
+        colorModal.style.display = 'none';
+    }
+});
+
+// نسخ الأكواد
+copyButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-clipboard-target');
+        const target = document.querySelector(targetId);
+        
+        // نسخ النص
+        target.select();
+        document.execCommand('copy');
+        
+        // تغيير نص الزر مؤقتاً
+        const originalText = this.textContent;
+        this.textContent = 'تم النسخ!';
+        this.classList.add('copied');
         
         setTimeout(() => {
-            alertBox.classList.remove('show');
-        }, 5000);
-    }
-
-    // إضافة طلب جديد
-    function addOrder(orderData) {
-        // توليد معرف جديد
-        const newId = Math.max(...orders.map(o => o.id)) + 1;
-        
-        const newOrder = {
-            id: newId,
-            customer: orderData.customerName,
-            phone: orderData.customerPhone,
-            state: orderData.orderState,
-            amount: parseInt(orderData.orderAmount),
-            date: new Date().toISOString().split('T')[0],
-            status: orderData.orderStatus,
-            products: orderData.orderProducts || 'لم يتم تحديد المنتجات'
-        };
-        
-        orders.unshift(newOrder);
-        renderOrders();
-        updateStats();
-        showAlert(`تم إضافة الطلب #${newId} بنجاح`, 'success');
-        closeOrderModal();
-    }
-
-    // تعديل طلب موجود
-    function editOrder(orderId) {
-        const order = orders.find(o => o.id === orderId);
-        if (!order) return;
-        
-        const modalTitle = document.getElementById('modalTitle');
-        modalTitle.textContent = `تعديل الطلب #${orderId}`;
-        
-        document.getElementById('customerName').value = order.customer;
-        document.getElementById('customerPhone').value = order.phone;
-        document.getElementById('orderState').value = order.state;
-        document.getElementById('customerAddress').value = 'عنوان تفصيلي للعميل...';
-        document.getElementById('orderAmount').value = order.amount;
-        document.getElementById('orderStatus').value = order.status;
-        document.getElementById('orderProducts').value = order.products;
-        
-        // تغيير زر الحفظ لتحديث الطلب
-        const submitBtn = orderForm.querySelector('button[type="submit"]');
-        submitBtn.textContent = 'تحديث الطلب';
-        submitBtn.onclick = function(e) {
-            e.preventDefault();
-            updateOrder(orderId);
-        };
-        
-        orderModal.style.display = 'flex';
-    }
-
-    // تحديث طلب
-    function updateOrder(orderId) {
-        const orderIndex = orders.findIndex(o => o.id === orderId);
-        if (orderIndex === -1) return;
-        
-        orders[orderIndex].customer = document.getElementById('customerName').value;
-        orders[orderIndex].phone = document.getElementById('customerPhone').value;
-        orders[orderIndex].state = document.getElementById('orderState').value;
-        orders[orderIndex].amount = parseInt(document.getElementById('orderAmount').value);
-        orders[orderIndex].status = document.getElementById('orderStatus').value;
-        orders[orderIndex].products = document.getElementById('orderProducts').value;
-        
-        renderOrders();
-        updateStats();
-        showAlert(`تم تحديث الطلب #${orderId} بنجاح`, 'success');
-        closeOrderModal();
-    }
-
-    // تغيير حالة الطلب
-    function changeStatus(orderId) {
-        const order = orders.find(o => o.id === orderId);
-        if (!order) return;
-        
-        // تحديد الحالة التالية
-        const statusOrder = ['new', 'confirmed', 'shipped', 'cancelled'];
-        const currentIndex = statusOrder.indexOf(order.status);
-        const nextIndex = (currentIndex + 1) % statusOrder.length;
-        const nextStatus = statusOrder[nextIndex];
-        
-        order.status = nextStatus;
-        
-        // محاكاة التحديث في Google Sheets
-        simulateGoogleSheetsUpdate(orderId, nextStatus);
-        
-        renderOrders();
-        updateStats();
-        
-        let statusText = '';
-        switch(nextStatus) {
-            case 'new': statusText = '🟡 جديد'; break;
-            case 'confirmed': statusText = '🟢 مؤكد'; break;
-            case 'shipped': statusText = '🔵 مشحون'; break;
-            case 'cancelled': statusText = '🔴 ملغى'; break;
-        }
-        
-        showAlert(`تم تغيير حالة الطلب #${orderId} إلى ${statusText}`, 'success');
-    }
-
-    // حذف طلب
-    function deleteOrder(orderId) {
-        if (confirm(`هل أنت متأكد من حذف الطلب #${orderId}؟`)) {
-            orders = orders.filter(o => o.id !== orderId);
-            renderOrders();
-            updateStats();
-            showAlert(`تم حذف الطلب #${orderId} بنجاح`, 'success');
-        }
-    }
-
-    // محاكاة تحديث Google Sheets
-    function simulateGoogleSheetsUpdate(orderId, status) {
-        console.log(`[Google Sheets] تحديث الطلب #${orderId} إلى حالة: ${status}`);
-        // في التطبيق الحقيقي، هنا سيتم استدعاء Google Sheets API
-    }
-
-    // فتح نموذج إضافة طلب جديد
-    function openOrderModal() {
-        const modalTitle = document.getElementById('modalTitle');
-        modalTitle.textContent = 'إضافة طلب جديد';
-        
-        // إعادة تعيين النموذج
-        orderForm.reset();
-        
-        // تعيين القيم الافتراضية
-        document.getElementById('orderStatus').value = 'new';
-        
-        // تغيير زر الحفظ لإضافة طلب
-        const submitBtn = orderForm.querySelector('button[type="submit"]');
-        submitBtn.textContent = 'حفظ الطلب';
-        submitBtn.onclick = function(e) {
-            e.preventDefault();
-            const formData = {
-                customerName: document.getElementById('customerName').value,
-                customerPhone: document.getElementById('customerPhone').value,
-                orderState: document.getElementById('orderState').value,
-                orderAmount: document.getElementById('orderAmount').value,
-                orderStatus: document.getElementById('orderStatus').value,
-                orderProducts: document.getElementById('orderProducts').value
-            };
-            addOrder(formData);
-        };
-        
-        orderModal.style.display = 'flex';
-    }
-
-    // إغلاق النموذج المنبثق
-    function closeOrderModal() {
-        orderModal.style.display = 'none';
-    }
-
-    // التصحيح التلقائي للأخطاء
-    function autoFixErrors() {
-        let fixedCount = 0;
-        
-        orders.forEach(order => {
-            if (!order.phone || order.phone === '') {
-                // توليد رقم هاتف عشوائي (محاكاة)
-                const randomPhone = '05' + Math.floor(10000000 + Math.random() * 90000000);
-                order.phone = randomPhone;
-                fixedCount++;
-            }
-        });
-        
-        if (fixedCount > 0) {
-            renderOrders();
-            updateStats();
-            showAlert(`تم تصحيح ${fixedCount} أخطاء تلقائياً`, 'success');
-        } else {
-            showAlert('لا توجد أخطاء تحتاج إلى تصحيح', 'info');
-        }
-    }
-
-    // معالجة تصدير البيانات
-    function setupExportButtons() {
-        document.querySelectorAll('.btn-export').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const exportType = this.parentElement.querySelector('h4').textContent;
-                showAlert(`جارٍ تحضير ملف ${exportType} للتحميل...`, 'info');
-                
-                // في التطبيق الحقيقي، هنا سيتم إنشاء الملف وتنزيله
-                setTimeout(() => {
-                    showAlert(`تم تحميل ملف ${exportType} بنجاح`, 'success');
-                }, 1500);
-            });
-        });
-    }
-
-    // إعداد معالجات الأحداث
-    function setupEventListeners() {
-        // البحث
-        searchBtn.addEventListener('click', filterOrders);
-        searchInput.addEventListener('keyup', filterOrders);
-        
-        // التصفية
-        filterStatus.addEventListener('change', filterOrders);
-        filterState.addEventListener('change', filterOrders);
-        
-        // إضافة طلب جديد
-        addOrderBtn.addEventListener('click', openOrderModal);
-        
-        // إغلاق النموذج المنبثق
-        closeModal.addEventListener('click', closeOrderModal);
-        cancelBtn.addEventListener('click', closeOrderModal);
-        
-        // إغلاق النموذج بالضغط خارج المحتوى
-        window.addEventListener('click', function(event) {
-            if (event.target === orderModal) {
-                closeOrderModal();
-            }
-        });
-        
-        // إغلاق رسالة التنبيه
-        closeAlert.addEventListener('click', function() {
-            alertBox.classList.remove('show');
-        });
-        
-        // التصحيح التلقائي
-        autoFixBtn.addEventListener('click', autoFixErrors);
-        
-        // تصدير البيانات
-        setupExportButtons();
-        
-        // تصحيح الأخطاء يدوياً
-        document.querySelectorAll('.error-actions .btn-small').forEach(btn => {
-            if (btn.textContent.includes('تصحيح يدوي')) {
-                btn.addEventListener('click', function() {
-                    const orderId = this.getAttribute('data-order');
-                    showAlert(`فتح نموذج تصحيح الطلب #${orderId}`, 'info');
-                });
-            }
-        });
-    }
-
-    // تهيئة التطبيق
-    function init() {
-        renderOrders();
-        updateStats();
-        setupEventListeners();
-        
-        // محاكاة تحديث البيانات كل 30 ثانية
-        setInterval(() => {
-            // في التطبيق الحقيقي، هنا سيتم مزامنة البيانات مع Google Sheets
-            const lastSync = document.querySelector('.last-sync');
-            if (lastSync) {
-                lastSync.textContent = 'آخر مزامنة: الآن';
-                
-                // إرجاع النص بعد 2 دقيقة
-                setTimeout(() => {
-                    lastSync.textContent = 'آخر مزامنة: قبل دقيقتين';
-                }, 120000);
-            }
-        }, 30000);
-    }
-
-    // بدء تشغيل التطبيق
-    init();
+            this.textContent = originalText;
+            this.classList.remove('copied');
+        }, 2000);
+    });
 });
+
+// دوال تحويل الألوان المساعدة
+function rgbToHex(r, g, b) {
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+}
+
+function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    
+    if (max === min) {
+        h = s = 0; // لون رمادي
+    } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        
+        switch(max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        
+        h /= 6;
+    }
+    
+    h = Math.round(h * 360);
+    s = Math.round(s * 100);
+    l = Math.round(l * 100);
+    
+    return `hsl(${h}, ${s}%, ${l}%)`;
+}
+
+// تهيئة أولية
+document.querySelector('.preset-btn[data-filter="normal"]').classList.add('active');
