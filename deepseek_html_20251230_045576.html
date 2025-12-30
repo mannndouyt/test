@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الطلبات | لوحة التحكم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- شريط التنقل العلوي -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-box-open"></i>
+                <h1>نظام إدارة الطلبات</h1>
+            </div>
+            
+            <div class="header-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="ابحث عن طلب بالاسم أو الهاتف...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <div class="user-info">
+                    <span>مرحباً، أحمد</span>
+                    <div class="avatar">أ</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- القائمة الجانبية -->
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="active"><a href="#"><i class="fas fa-tachometer-alt"></i> لوحة التحكم</a></li>
+            <li><a href="#orders"><i class="fas fa-shopping-cart"></i> جميع الطلبات</a></li>
+            <li><a href="#new"><i class="fas fa-plus-circle"></i> طلبات جديدة</a></li>
+            <li><a href="#confirmed"><i class="fas fa-check-circle"></i> مؤكدة</a></li>
+            <li><a href="#shipped"><i class="fas fa-shipping-fast"></i> مشحونة</a></li>
+            <li><a href="#cancelled"><i class="fas fa-times-circle"></i> ملغاة</a></li>
+            <li><a href="#errors"><i class="fas fa-exclamation-triangle"></i> أخطاء تحتاج تصحيح</a></li>
+            <li><a href="#export"><i class="fas fa-file-export"></i> تصدير للشحن</a></li>
+            <li><a href="#sheets"><i class="fas fa-table"></i> إدارة Sheets</a></li>
+            <li><a href="#history"><i class="fas fa-history"></i> سجل التعديلات</a></li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sync-status">
+                <i class="fas fa-sync-alt"></i>
+                <span>مزامنة مع Google Sheets</span>
+                <div class="sync-indicator active"></div>
+            </div>
+            <p class="last-sync">آخر مزامنة: قبل دقيقتين</p>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- إحصائيات سريعة -->
+        <section class="stats-section">
+            <h2 class="section-title">الإحصائيات اليومية</h2>
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>إجمالي الطلبات</h3>
+                        <p class="stat-number" id="totalOrders">125</p>
+                        <p class="stat-change">+12 عن الأمس</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card new">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>طلبات جديدة</h3>
+                        <p class="stat-number" id="newOrders">42</p>
+                        <p class="stat-change">🟡 تحتاج معالجة</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card confirmed">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>مؤكدة</h3>
+                        <p class="stat-number" id="confirmedOrders">65</p>
+                        <p class="stat-change">🟢 جاهزة للشحن</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card shipped">
+                    <div class="stat-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>مشحونة</h3>
+                        <p class="stat-number" id="shippedOrders">15</p>
+                        <p class="stat-change">🔵 قيد التوصيل</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card cancelled">
+                    <div class="stat-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>ملغاة</h3>
+                        <p class="stat-number" id="cancelledOrders">3</p>
+                        <p class="stat-change">🔴 انخفضت 50%</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card errors">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>أخطاء تحتاج تصحيح</h3>
+                        <p class="stat-number" id="errorOrders">8</p>
+                        <p class="stat-change">⚠️ تدخل فوري</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم التحكم بالطلبات -->
+        <section class="controls-section">
+            <div class="section-header">
+                <h2 class="section-title">الطلبات الأخيرة</h2>
+                <div class="controls">
+                    <button class="btn btn-primary" id="addOrderBtn">
+                        <i class="fas fa-plus"></i> إضافة طلب جديد
+                    </button>
+                    <select id="filterStatus" class="filter-select">
+                        <option value="all">جميع الحالات</option>
+                        <option value="new">جديد</option>
+                        <option value="confirmed">مؤكد</option>
+                        <option value="shipped">مشحون</option>
+                        <option value="cancelled">ملغى</option>
+                    </select>
+                    <select id="filterState" class="filter-select">
+                        <option value="all">جميع الولايات</option>
+                        <option value="الرياض">الرياض</option>
+                        <option value="جدة">جدة</option>
+                        <option value="الدمام">الدمام</option>
+                        <option value="مكة">مكة</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- قائمة الطلبات -->
+            <div class="orders-container">
+                <div class="orders-header">
+                    <div class="order-cell">رقم الطلب</div>
+                    <div class="order-cell">العميل</div>
+                    <div class="order-cell">الهاتف</div>
+                    <div class="order-cell">الولاية</div>
+                    <div class="order-cell">القيمة</div>
+                    <div class="order-cell">التاريخ</div>
+                    <div class="order-cell">الحالة</div>
+                    <div class="order-cell">الإجراءات</div>
+                </div>
+                
+                <div class="orders-list" id="ordersList">
+                    <!-- سيتم ملء الطلبات هنا بواسطة JavaScript -->
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                <span class="page-number">1</span>
+                <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                <span class="page-info">عرض ١-١٠ من ١٢٥ طلب</span>
+            </div>
+        </section>
+
+        <!-- قسم الأخطاء -->
+        <section class="errors-section" id="errorsSection">
+            <div class="section-header">
+                <h2 class="section-title">تنبيهات الأخطاء <span class="badge">8</span></h2>
+                <button class="btn btn-secondary" id="autoFixBtn">
+                    <i class="fas fa-magic"></i> تصحيح تلقائي
+                </button>
+            </div>
+            
+            <div class="errors-list">
+                <div class="error-item">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="error-info">
+                        <h4>الطلب #1234 - رقم الهاتف ناقص</h4>
+                        <p>العميل: أحمد محمد - ولاية: الرياض</p>
+                    </div>
+                    <div class="error-actions">
+                        <button class="btn btn-small" data-order="1234">تصحيح يدوي</button>
+                        <button class="btn btn-small btn-secondary" data-order="1234">تجاهل</button>
+                    </div>
+                </div>
+                
+                <div class="error-item">
+                    <div class="error-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="error-info">
+                        <h4>الطلب #1235 - العنوان غير واضح</h4>
+                        <p>العميل: سارة خالد - ولاية: جدة</p>
+                    </div>
+                    <div class="error-actions">
+                        <button class="btn btn-small" data-order="1235">تصحيح يدوي</button>
+                        <button class="btn btn-small btn-secondary" data-order="1235">تجاهل</button>
+                    </div>
+                </div>
+                
+                <div class="error-item">
+                    <div class="error-icon">
+                        <i class="fas fa-clone"></i>
+                    </div>
+                    <div class="error-info">
+                        <h4>الطلب #1236 - طلب مكرر</h4>
+                        <p>العميل: محمد علي - ولاية: الدمام</p>
+                    </div>
+                    <div class="error-actions">
+                        <button class="btn btn-small" data-order="1236">دمج الطلبات</button>
+                        <button class="btn btn-small btn-secondary" data-order="1236">تجاهل</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم تصدير الطلبات -->
+        <section class="export-section">
+            <h2 class="section-title">تصدير طلبات اليوم للشحن</h2>
+            <div class="export-options">
+                <div class="export-option">
+                    <i class="fas fa-file-excel"></i>
+                    <h4>Excel</h4>
+                    <p>ملف Excel منظم وجاهز للطباعة</p>
+                    <button class="btn btn-export">تصدير</button>
+                </div>
+                
+                <div class="export-option">
+                    <i class="fas fa-file-pdf"></i>
+                    <h4>PDF</h4>
+                    <p>ملف PDF مع باركود لكل طلب</p>
+                    <button class="btn btn-export">تصدير</button>
+                </div>
+                
+                <div class="export-option">
+                    <i class="fas fa-file-csv"></i>
+                    <h4>CSV</h4>
+                    <p>ملف CSV لاستيراده في أنظمة أخرى</p>
+                    <button class="btn btn-export">تصدير</button>
+                </div>
+                
+                <div class="export-option">
+                    <i class="fas fa-truck"></i>
+                    <h4>حسب الولاية</h4>
+                    <p>تصدير طلبات ولاية محددة</p>
+                    <select class="export-select">
+                        <option value="الرياض">الرياض</option>
+                        <option value="جدة">جدة</option>
+                        <option value="الدمام">الدمام</option>
+                    </select>
+                    <button class="btn btn-export">تصدير</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- نموذج إضافة/تعديل طلب -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">إضافة طلب جديد</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="customerName">اسم العميل *</label>
+                        <input type="text" id="customerName" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerPhone">رقم الهاتف *</label>
+                            <input type="tel" id="customerPhone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="orderState">الولاية *</label>
+                            <select id="orderState" required>
+                                <option value="">اختر ولاية</option>
+                                <option value="الرياض">الرياض</option>
+                                <option value="جدة">جدة</option>
+                                <option value="الدمام">الدمام</option>
+                                <option value="مكة">مكة</option>
+                                <option value="المدينة">المدينة</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerAddress">العنوان التفصيلي *</label>
+                        <textarea id="customerAddress" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="orderAmount">القيمة (ريال) *</label>
+                            <input type="number" id="orderAmount" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="orderStatus">حالة الطلب *</label>
+                            <select id="orderStatus" required>
+                                <option value="new">🟡 جديد</option>
+                                <option value="confirmed">🟢 مؤكد</option>
+                                <option value="shipped">🔵 مشحون</option>
+                                <option value="cancelled">🔴 ملغى</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="orderProducts">المنتجات</label>
+                        <textarea id="orderProducts" rows="3" placeholder="أدخل قائمة المنتجات (اختياري)"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">إلغاء</button>
+                        <button type="submit" class="btn btn-primary">حفظ الطلب</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسائل التنبيه -->
+    <div class="alert" id="alertBox">
+        <span id="alertMessage"></span>
+        <button class="close-alert">&times;</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
