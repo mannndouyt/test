@@ -3,155 +3,298 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محلل ألوان الصور وتطبيق الفلاتر</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>موقع مخصص - هذا هو الكود</title>
     <style>
-        /* إضافة CSS هنا */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        .normal-text {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+            margin-bottom: 40px;
+            word-wrap: break-word;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto;
+            letter-spacing: 1px;
+        }
+        
+        .copy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .copy-btn.copied {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .decoration {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .decoration:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 5%;
+            background: rgba(0, 219, 222, 0.1);
+        }
+        
+        .decoration:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            bottom: 15%;
+            right: 10%;
+            background: rgba(252, 0, 255, 0.1);
+        }
+        
+        .decoration:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 15%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .normal-text {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+            
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .copy-btn {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .normal-text {
+                font-size: 2rem;
+                letter-spacing: 1px;
+            }
+            
+            .copy-btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+            
+            .notification {
+                top: 20px;
+                right: 20px;
+                left: 20px;
+                text-align: center;
+                justify-content: center;
+            }
+        }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <!-- عناصر زخرفية -->
+    <div class="decoration"></div>
+    <div class="decoration"></div>
+    <div class="decoration"></div>
+    
+    <!-- المحتوى الرئيسي -->
     <div class="container">
-        <!-- رأس الموقع -->
-        <header>
-            <h1><i class="fas fa-palette"></i> محلل ألوان الصور</h1>
-            <p>قم بتحليل ألوان أي صورة وتطبيق الفلاتر عليها بسهولة</p>
-        </header>
-        
-        <!-- قسم تحميل الصورة -->
-        <section class="upload-section">
-            <div class="upload-options">
-                <div class="option" id="upload-local">
-                    <i class="fas fa-upload"></i>
-                    <h3>رفع صورة من الجهاز</h3>
-                    <p>اختر صورة من جهاز الكمبيوتر الخاص بك</p>
-                    <input type="file" id="image-input" accept="image/*" hidden>
-                </div>
-                <div class="option" id="upload-url">
-                    <i class="fas fa-link"></i>
-                    <h3>رابط الصورة</h3>
-                    <p>أدخل رابط صورة من الإنترنت</p>
-                </div>
-            </div>
-            
-            <div class="url-input-container" id="url-input-container">
-                <input type="text" id="image-url" placeholder="https://example.com/image.jpg">
-                <button id="load-url">تحميل الصورة</button>
-            </div>
-            
-            <div class="preview-container">
-                <div class="preview-area" id="preview-area">
-                    <i class="fas fa-image"></i>
-                    <p>سيظهر معاينة الصورة هنا</p>
-                </div>
-                <div class="image-info">
-                    <h3>تعليمات الاستخدام:</h3>
-                    <ol>
-                        <li>قم بتحميل صورة من جهازك أو أدخل رابط صورة</li>
-                        <li>سيتم استخراج ألوان الصورة الرئيسية تلقائياً</li>
-                        <li>استخدم أدوات الفلترة لتعديل الصورة</li>
-                        <li>انسخ أكواد الألوان أو حمّل الصورة المعدلة</li>
-                    </ol>
-                </div>
-            </div>
-        </section>
-        
-        <!-- قسم نتائج تحليل الألوان -->
-        <section class="colors-section">
-            <h2><i class="fas fa-eye-dropper"></i> الألوان المستخرجة من الصورة</h2>
-            <div class="colors-container" id="colors-container">
-                <div class="color-placeholder">
-                    <p>بعد تحميل الصورة، ستظهر الألوان المستخرجة هنا</p>
-                </div>
-            </div>
-        </section>
-        
-        <!-- قسم الفلاتر والتعديلات -->
-        <section class="filters-section">
-            <h2><i class="fas fa-sliders-h"></i> الفلاتر والتعديلات</h2>
-            
-            <div class="filter-controls">
-                <div class="filter-group">
-                    <label for="brightness">السطوع: <span id="brightness-value">100%</span></label>
-                    <input type="range" id="brightness" min="0" max="200" value="100">
-                </div>
-                
-                <div class="filter-group">
-                    <label for="contrast">التباين: <span id="contrast-value">100%</span></label>
-                    <input type="range" id="contrast" min="0" max="200" value="100">
-                </div>
-                
-                <div class="filter-group">
-                    <label for="saturation">التشبع: <span id="saturation-value">100%</span></label>
-                    <input type="range" id="saturation" min="0" max="200" value="100">
-                </div>
-                
-                <div class="filter-group">
-                    <label for="hue">درجة اللون: <span id="hue-value">0°</span></label>
-                    <input type="range" id="hue" min="0" max="360" value="0">
-                </div>
-                
-                <div class="filter-group">
-                    <label for="blur">الضبابية: <span id="blur-value">0px</span></label>
-                    <input type="range" id="blur" min="0" max="10" value="0" step="0.1">
-                </div>
-            </div>
-            
-            <div class="preset-filters">
-                <h3>فلاتر جاهزة:</h3>
-                <div class="filter-presets">
-                    <button class="preset-btn" data-filter="normal">عادي</button>
-                    <button class="preset-btn" data-filter="grayscale">أبيض وأسود</button>
-                    <button class="preset-btn" data-filter="sepia">سيبريا</button>
-                    <button class="preset-btn" data-filter="invert">عكسي</button>
-                    <button class="preset-btn" data-filter="hue-rotate">تدرج لوني</button>
-                    <button class="preset-btn" data-filter="vibrant">حيوي</button>
-                    <button class="preset-btn" data-filter="cool">بارد</button>
-                    <button class="preset-btn" data-filter="warm">دافئ</button>
-                </div>
-            </div>
-            
-            <div class="actions">
-                <button id="reset-filters"><i class="fas fa-redo"></i> إعادة تعيين الفلاتر</button>
-                <button id="download-image"><i class="fas fa-download"></i> تحميل الصورة المعدلة</button>
-                <button id="download-colors"><i class="fas fa-swatchbook"></i> تحميل لوحة الألوان</button>
-            </div>
-        </section>
-        
-        <!-- تذييل الصفحة -->
-        <footer>
-            <p>تم إنشاء هذا الموقع باستخدام HTML, CSS, JavaScript</p>
-            <p>يمكنك استخدامه مجاناً لتحليل ألوان الصور وتطبيق الفلاتر عليها</p>
-        </footer>
+        <h1 class="normal-text">هذا هو الكود</h1>
+        <button class="copy-btn" id="copyButton">
+            <i class="far fa-copy"></i>
+            نسخ: صلي على الحبيب
+        </button>
     </div>
-
-    <!-- نافذة عرض أكواد الألوان -->
-    <div class="modal" id="color-modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3>كود اللون</h3>
-            <div class="color-codes">
-                <div class="code-item">
-                    <label>HEX:</label>
-                    <input type="text" id="hex-code" readonly>
-                    <button class="copy-btn" data-clipboard-target="#hex-code">نسخ</button>
-                </div>
-                <div class="code-item">
-                    <label>RGB:</label>
-                    <input type="text" id="rgb-code" readonly>
-                    <button class="copy-btn" data-clipboard-target="#rgb-code">نسخ</button>
-                </div>
-                <div class="code-item">
-                    <label>HSL:</label>
-                    <input type="text" id="hsl-code" readonly>
-                    <button class="copy-btn" data-clipboard-target="#hsl-code">نسخ</button>
-                </div>
-            </div>
-        </div>
+    
+    <!-- إشعار النسخ -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        تم نسخ "صلي على الحبيب" إلى الحافظة
     </div>
-
+    
+    <!-- تذييل الصفحة -->
+    <div class="footer">
+        تم إنشاء هذا الموقع بواسطة بوت تلجرام &copy; 2024
+    </div>
+    
     <script>
-        // إضافة JavaScript هنا
+        // تأثير حركة بسيط للعناصر الزخرفية
+        document.addEventListener('mousemove', (e) => {
+            const decorations = document.querySelectorAll('.decoration');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            decorations.forEach((decoration, index) => {
+                const speed = (index + 1) * 0.5;
+                const x = (mouseX * speed * 20) - 10;
+                const y = (mouseY * speed * 20) - 10;
+                
+                decoration.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+        
+        // تأثير تدريجي لظهور النص
+        document.addEventListener('DOMContentLoaded', () => {
+            const normalText = document.querySelector('.normal-text');
+            const text = normalText.textContent;
+            normalText.textContent = '';
+            
+            for (let i = 0; i < text.length; i++) {
+                setTimeout(() => {
+                    normalText.textContent += text[i];
+                }, i * 50);
+            }
+        });
+        
+        // وظيفة نسخ النص
+        const copyButton = document.getElementById('copyButton');
+        const notification = document.getElementById('notification');
+        
+        copyButton.addEventListener('click', async () => {
+            const textToCopy = "صلي على الحبيب";
+            
+            try {
+                // استخدام Clipboard API الحديث
+                await navigator.clipboard.writeText(textToCopy);
+                
+                // تغيير مظهر الزر مؤقتًا
+                copyButton.classList.add('copied');
+                copyButton.innerHTML = '<i class="fas fa-check"></i> تم النسخ!';
+                
+                // عرض الإشعار
+                notification.classList.add('show');
+                
+                // إعادة الزر إلى حالته الأصلية بعد 2 ثانية
+                setTimeout(() => {
+                    copyButton.classList.remove('copied');
+                    copyButton.innerHTML = `<i class="far fa-copy"></i> نسخ: صلي على الحبيب`;
+                }, 2000);
+                
+                // إخفاء الإشعار بعد 3 ثوانٍ
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+                
+            } catch (err) {
+                // الطريقة البديلة للأنظمة القديمة
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // عرض رسالة نجاح حتى مع الطريقة القديمة
+                copyButton.classList.add('copied');
+                copyButton.innerHTML = '<i class="fas fa-check"></i> تم النسخ!';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    copyButton.classList.remove('copied');
+                    copyButton.innerHTML = `<i class="far fa-copy"></i> نسخ: صلي على الحبيب`;
+                }, 2000);
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        });
     </script>
 </body>
 </html>
