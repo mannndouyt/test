@@ -25,21 +25,22 @@ header h1 span{color:var(--gold)}
 .page-wrap{max-width:760px;margin:0 auto;padding:0 12px}
 
 /* SINGLE IMAGE - تم تعديل هذا القسم ليناسب الصورة الطويلة */
-.img-wrap{
-  width:100%;
-  max-width:640px; /* يمكن إزالة هذا السطر إذا أردت الصورة بعرض الشاشة بالكامل */
-  margin:20px auto 0;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:var(--sh);
-  background:#fff; /* خلفية بيضاء بدلاً من سوداء */
-  /* تم حذف aspect-ratio: 1/1 لكي تأخذ الصورة ارتفاعها الطبيعي */
+.img-wrap {
+  width: 100%;
+  /* تم إزالة max-width لتأخذ العرض بالكامل، أو يمكنك تركه 640px إذا أردتها بعرض البطاقة */
+  max-width: 100%; 
+  margin: 20px auto 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--sh);
+  background: #fff;
+  /* لا يوجد ارتفاع ثابت هنا */
 }
-.img-wrap img{
-  width:100%;
-  height:auto; /* ارتفاع تلقائي يحافظ على تناسق الصورة */
-  display:block;
-  /* تم حذف object-fit: contain لأننا نريد الصورة أن تملأ العرض */
+
+.img-wrap img {
+  width: 100%;
+  height: auto; /* هذا السطر السحري: يجعل الارتفاع يتناسب تلقائياً مع العرض بنسبة الصورة الأصلية */
+  display: block;
 }
 
 /* PRODUCT INFO */
@@ -185,7 +186,7 @@ select:disabled{background:#f5f5f5;color:#aaa;cursor:not-allowed}
 
   <!-- صورة البانر الطويلة -->
   <div class="img-wrap">
-    <img src="https://i.ibb.co/Ng0xm3sJ/hghh-1.png" alt="ضمان الجودة">
+    <img src="https://i.ibb.co/Zp5GN0dM/image.png" alt="ضمان الجودة">
   </div>
 
   <div class="prod-info">
